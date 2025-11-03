@@ -1,0 +1,121 @@
+/*
+Checking quality of data.
+
+Testing arena
+*/
+
+-- silver.crm_cust_info table
+
+SELECT 
+cst_id,
+COUNT(*)
+FROM bronze.crm_cust_info
+GROUP BY cst_id
+HAVING COUNT(*) > 1 OR cst_id IS NULL;
+
+SELECT cst_key
+FROM silver.crm_cust_info
+WHERE cst_key != TRIM(cst_key)
+
+SELECT DISTINCT cst_gndr
+FROM silver.crm_cust_info
+
+SELECT DISTINCT cst_marital_status
+FROM silver.crm_cust_info
+
+/*
+SELECT cst_key
+FROM bronze.crm_cust_info
+WHERE cst_key != TRIM(cst_key)
+
+This is to find where the spaces are.
+*/
+
+/*
+Data standardization and consistency
+
+SELECT DISTINCT cst_gender/material_status
+FROM bronze.crm_cust_info
+(to find distict value)
+*/
+
+--------------------------------
+
+-- silver.crm_prd_info table
+
+SELECT prd_nm
+FROM silver.crm_prd_info
+WHERE prd_nm != TRIM(prd_nm)
+
+SELECT prd_cost
+FROM silver.crm_prd_info
+WHERE prd_cost < 0 OR prd_cost IS NULL
+
+SELECT DISTINCT prd_line
+FROM silver.crm_prd_info
+
+SELECT
+*
+FROM silver.crm_prd_info
+WHERE prd_end_dt < prd_start_dt
+
+-- Check for nulls or duplicates in PK
+
+SELECT
+prd_id,
+COUNT(*)
+FROM bronze.crm_prd_info
+GROUP BY prd_id 
+HAVING COUNT(*) > 1 OR prd_id IS NULL
+
+-- When there are complex things, like wrong entry of dates in this case, he takes it all to excel to brainstorm and 
+-- see's manually what are the possible options to rectify them.
+
+
+-------------------------------------------
+
+-- silver.crm_sales_details table
+
+
+SELECT
+NULLIF(sls_order_dt, 0)
+FROM bronze.crm_sales_details
+WHERE sls_order_dt <= 0 
+OR LEN(sls_order_dt) != 8
+
+
+SELECT
+*
+FROM bronze.crm_sales_details
+WHERE sls_order_dt > sls_ship_dt OR sls_order_dt > sls_due_dt
+
+
+---------------------------------------------
+
+-- silver.erp_cust_az12
+
+
+SELECT DISTINCT bdate
+FROM bronze.erp_cust_az12
+WHERE bdate < '1924-01-01' OR bdate > GETDATE()
+
+----------------------------------------------
+
+-- silver.erp_loc_a101
+
+SELECT DISTINCT cntry
+FROM bronze.erp_loc_a101
+ORDER BY cntry
+
+
+----------------------------------------------
+
+-- silver.erp_px_cat_g1v2
+
+--No changes needed
+
+
+
+
+
+
